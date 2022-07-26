@@ -3,10 +3,9 @@ window.onload = () => {
   console.log("Dom is loaded");
 };
 
-const initPage = () => {
+const getId = () => {
   let idProduct = new URLSearchParams(window.location.search).get("id");
   console.log(idProduct);
-  retrieveProduct(idProduct);
 };
 
 const retrieveProduct = async () => {
