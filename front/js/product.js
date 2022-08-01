@@ -1,124 +1,46 @@
 window.onload = () => {
   console.log("Dom is loaded");
-}
-
+  getId();
+};
 const getId = () => {
   let idProduct = new URLSearchParams(window.location.search).get("id");
   console.log(idProduct);
   getData(idProduct);
-};
-
-const retrieveProduct = async (idProduct) => {
-  try {
-    const product = `http://localhost:3000/api/products/${idProduct}`;
-    const response = await fetch(product);
-    console.log(product);
-    if (response.ok) {
-      return response.json();
-    }
-  } catch (e) {
-    console.log("error", e);
-  }
 };
 
 const getData = async (idProduct) => {
   try {
     const content = await retrieveProduct(idProduct);
-    console.log(typeof product.error);
-    if (product.error === "undefined") {
+    console.log(content);
+    console.log(typeof content.error);
+    if (typeof content.error === "undefined") {
       displayProd(content);
-    } else {
-      console.log("error", error.msg);
-    }
-  } catch (e) {
-    console.log("error", e);
+    } else "Error", content.msg;
+  } catch (error) {
+    return {
+      error: true,
+      msg: error,
+    };
   }
 };
 
-/*
-
-
-
-window.onload = () => {
-  console.log("Dom is loaded");
-  //APPEL DE LA FONCTION
-  getId();
-};
-
-
-
-
-
-
----------------------------------------------------------------------------------------------------------
-
-//1ere fonction : récuperer l'url et extraire l'id ( URLsearchparam) resultat variable idProduct = id
-// faire un console log idProduct et verifier que l'id corresponde à l'id dans l'url
-// apl 2eme fonction retrieveProduct(idProduct)
-
-const getId = () => {
-  let idProduct = new URLSearchParams(window.location.search).get("id");
-  console.log(idProduct);
-  //APPEL DE LA FONCTION
-  getData(idProduct);
-};
-
----------------------------------------------------------------------------------------------------------
-
-
-//2eme fonction
-// Contacter le back avec url de l'id de ce produit (fetch)
-// product est le resultat du retour du back
-// apl displayProd(product)
-
-
-
 const retrieveProduct = async (idProduct) => {
   try {
-    const urlProd = `http://localhost:3000/api/products/${idProduct}`;
-    const response = await fetch(urlProd);
+    const prodApi = `http://localhost:3000/api/products/${idProduct}`;
+    let response = await fetch(prodApi);
     if (response.ok) {
-      //RETOUR DE LA VALEUR VERS LA FONCTION QUI M'A APPELLE
       return response.json();
-      // LE RETURN VEUT DIRE QUE JE RENVOIE LA REPONSE A LA FONCTION QUI M'A APPELÉ EN L'OCCURRENCE C'EST getData
     }
   } catch (error) {
     return { error: true, msg: error };
   }
 };
 
-
-
----------------------------------------------------------------------------------------------------------
-
+const displayProd = (product) => {
+  let h1 = (document.getElementById("title").textContent = product.name);
+  console.log(product.name);
+};
 
 //3eme
 // afficher le produit
 // appeler fonction qui attache un ecouteur
-
-
-
-
-const getData = async (idProduct) => {
-  try {
-    const content = await retrieveProduct(idProduct);
-    console.log(typeof content.error); // undefined
-    if (typeof content.error === "undefined") {
-      //APPEL DE LA FONCTION
-      displayProd(content);
-    } else {
-      console.log("Error", content.msg);
-    }
-  } catch (e) {
-    console.log("Error", e);
-  }
-};
-
----------------------------------------------------------------------------------------------------------
-
-
-
-const displayProd = (product) => {
-  //Affichage du produit
-};
-*/

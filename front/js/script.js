@@ -6,19 +6,12 @@ window.onload = () => {
 const initPage = async () => {
   try {
     const content = await retrieveData();
-    console.log(typeof content.error); // undefined
+    console.log(typeof content.error);
     if (typeof content.error === "undefined") {
       console.log(content);
-      // content.map((prod) => {
-      //   create(prod);
-      //   console.log(typeof prod);
-      // });
       for (let product of content) {
         create(product);
       }
-      // for (let i in content) {
-      //   create(product[i])
-      // }
     } else {
       console.log("Error", content.msg);
     }
