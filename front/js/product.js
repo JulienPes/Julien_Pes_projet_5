@@ -3,18 +3,56 @@ window.onload = () => {
   getId();
 };
 const getId = () => {
-  let idProduct = new URLSearchParams(window.location.search).get("id");
-  console.log(idProduct);
-  getData(idProduct);
+  let firstArg = new URLSearchParams(window.location.search).get("id");
+  console.log(firstArg);
+  getProduct(firstArg);
 };
 
-const getData = async (idProduct) => {
+const getProduct = async (zeub) => {
   try {
-    const content = await retrieveProduct(idProduct);
-    console.log(content);
-    console.log(typeof content.error);
-    if (typeof content.error === "undefined") {
-      displayProd(content);
+    const prodApi = `http://localhost:3000/api/products/${zeub}`;
+    const response = await fetch(prodApi);
+    if (!response.ok) {
+      throw new Error(`"erreur http :" ${response.status}`);
+    }
+    const product = await response.json();
+    console.log(product);
+    if (product.ok != "undefined") {
+      displayProd(product);
+    } else {
+      "Error", product.msg;
+    }
+  } catch (error) {
+    return { error: true, msg: error };
+  }
+};
+
+const displayProd = (prod) => {
+  let img = document.createElement("img");
+  img.setAttribute("src", prod.imageUrl);
+  img.setAttribute("alt", prod.altTxt);
+  let title = document.getElementById("title");
+  title.textContent = prod.name;
+  document.getElementsByClassName("item__img")[0].appendChild(img);
+  let text = document.getElementById("description");
+  text.textContent = prod.description;
+};
+
+//3eme
+// afficher le produit
+// appeler fonction qui attache un ecouteur
+/*
+const getProduct = async (idProduct) => {
+  try {
+    const prodApi = `http://localhost:3000/api/products/${idProduct}`;
+    let response = await fetch(prodApi);
+    if (!response.ok) {
+      throw new Error(`"erreur http :" ${response.status}`);
+    }
+    const product = await response.json();
+
+    if (typeof product.error === "undefined") {
+      displayProd(product);
     } else "Error", content.msg;
   } catch (error) {
     return {
@@ -24,23 +62,8 @@ const getData = async (idProduct) => {
   }
 };
 
-const retrieveProduct = async (idProduct) => {
-  try {
-    const prodApi = `http://localhost:3000/api/products/${idProduct}`;
-    let response = await fetch(prodApi);
-    if (response.ok) {
-      return response.json();
-    }
-  } catch (error) {
-    return { error: true, msg: error };
-  }
-};
-
 const displayProd = (product) => {
   let h1 = (document.getElementById("title").textContent = product.name);
   console.log(product.name);
 };
-
-//3eme
-// afficher le produit
-// appeler fonction qui attache un ecouteur
+*/

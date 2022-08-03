@@ -1,35 +1,22 @@
 window.onload = () => {
   console.log("Dom is loaded");
-  initPage();
+  getProducts();
 };
 
-const initPage = async () => {
-  try {
-    const content = await retrieveData();
-    console.log(typeof content.error);
-    if (typeof content.error === "undefined") {
-      console.log(content);
-      for (let product of content) {
-        create(product);
-      }
-    } else {
-      console.log("Error", content.msg);
-    }
-  } catch (e) {
-    console.log("Error", e);
-  }
-};
-
-const retrieveData = async () => {
+const getProducts = async () => {
   try {
     const urlApi = "http://localhost:3000/api/products";
     const response = await fetch(urlApi);
-    console.log(response.ok);
-    if (response.ok) {
-      return response.json();
+    if (!response.ok) {
+      throw new Error(`"erreur http :" ${response.status}`);
     }
-  } catch (error) {
-    return { error: true, msg: error };
+    const products = await response.json();
+
+    for (let product of products) {
+      create(product);
+    }
+  } catch (e) {
+    console.log("Error", e);
   }
 };
 
@@ -42,8 +29,7 @@ function create(prod) {
   let img = document.createElement("img");
   img.setAttribute("src", prod.imageUrl);
   img.setAttribute("alt", prod.altTxt);
-  img.setAttribute("class", "img-fluid");
-
+  
   let h3 = document.createElement("h3");
   h3.setAttribute("class", "productName");
   h3.textContent = prod.name;
