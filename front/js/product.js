@@ -8,6 +8,37 @@ const getId = () => {
   getProduct(firstArg);
 };
 
+const getProduct = async (prod) => {
+  try {
+    const prodApi = `http://localhost:3000/api/products/${prod}`;
+    const response = await fetch(prodApi);
+    if (!response.ok) {
+      throw new error(`"erreur http :" ${response.status}`);
+    } else {
+      const product = await response.json();
+      console.log(product);
+      createProd(product);
+    }
+  } catch (error) {
+    return {
+      error: true,
+      msg: error,
+    };
+  }
+};
+
+const createProd = (prod) => {
+  let img = document.createElement("img");
+  img.setAttribute("src", prod.imageUrl);
+  img.setAttribute("alt", prod.altTxt);
+
+  document.getElementsByClassName("item__img")[0].appendChild(img);
+  document.getElementById("price").textContent = prod.price;
+  document.getElementById("title").textContent = prod.name;
+  document.getElementById("description").textContent = prod.description;
+};
+
+/*
 const getProduct = async (zeub) => {
   try {
     const prodApi = `http://localhost:3000/api/products/${zeub}`;
