@@ -107,19 +107,19 @@ const add = (prod) => {
   console.log(checkColor(selectedColor));
   console.log(checkOpt(selectedQty));
   if (checkOpt(selectedQty) && checkColor(selectedColor)) {
-    const but = document.getElementById("addToCart").disabled = true;
-    let order ={
-      Identifiant : prod,
-      Couleur : selectedColor,
-      Quantité : selectedQty
-    }
+    const but = (document.getElementById("addToCart").disabled = true);
+    let order = {
+      Identifiant: prod,
+      Couleur: selectedColor,
+      Quantité: selectedQty,
+    };
     console.log(order);
   }
 };
 
 const checkOpt = (selectedQty) => {
   if (
-    undefined === typeof selectedQty ||
+    "undefined" === typeof selectedQty ||
     0 >= selectedQty ||
     100 < selectedQty
   ) {
