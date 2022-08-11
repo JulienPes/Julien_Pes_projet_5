@@ -1,7 +1,14 @@
+/**
+ * Appeler la première fonction dès le chargement du "dom"
+ */
 window.onload = () => {
   console.log("Dom is loaded");
   getProducts();
 };
+/**
+ * Récupérer les données des produits 
+ * @returns Object
+ */
 const getProducts = async () => {
   try {
     const urlApi = "http://localhost:3000/api/products";
@@ -21,7 +28,10 @@ const getProducts = async () => {
     };
   }
 };
-
+/**
+ * Afficher les produits
+ * @param {Object} prod 
+ */
 const create = (prod) => {
   let link = document.createElement("a");
   link.setAttribute("href", `./product.html?id=${prod._id}`);
