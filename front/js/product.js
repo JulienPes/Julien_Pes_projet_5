@@ -49,6 +49,7 @@ const displayProd = (product) => {
     let opt = new Option(color, color);
     document.getElementById("colors").appendChild(opt);
   });
+
   // for (let color of product.colors) {
   //   let opt = new Option(color, color);
   //   document.getElementById("colors").appendChild(opt);
@@ -73,7 +74,7 @@ const add = (product) => {
   let qtyValue = document.getElementById("quantity").value;
 
   if (optSelected(clrValue) && nbSelected(qtyValue)) {
-    let btn = (document.getElementById("addToCart").disabled = true);
+    document.getElementById("addToCart").disabled = true;
     let prd = {
       _id: product,
       color: clrValue,
@@ -99,10 +100,11 @@ const optSelected = (clrValue) => {
 };
 /**
  *Vérifier que le nombre sélectionné soit compris entre 1 et 100
- * @param {Number} value
+ * @param {String} qtyValue
  * @returns Boolean
  */
 const nbSelected = (qtyValue) => {
+  console.log(typeof qtyValue);
   if (qtyValue === "undefined" || 0 >= qtyValue || 100 < qtyValue) {
     alert("Veuillez selectionner une quantité valide");
     return false;
@@ -114,21 +116,21 @@ const nbSelected = (qtyValue) => {
  * Mettre dans le localStorage le produit
  */
 const putToCart = (prd) => {
+  console.log(prd);
   let cart;
   if (!localStorage.getItem("cmd")) {
+    console.log("1er produit");
     cart = [];
     cart.push(prd);
   } else {
     cart = JSON.parse(localStorage.getItem("cmd"));
-    const exist = checkCart(prd, cart);
-    if (exist) {
-      cart[i].quantity++;
-      // modifier la quantité dans cart du prod deja existant
-    } else {
+    console.log(cart);
+    if (!checkCart(prd, cart)) {
       cart.push(prd);
     }
   }
   localStorage.setItem("cmd", JSON.stringify(cart));
+  document.getElementById("addToCart").disabled = false;
   alert("Produit ajouté");
 };
 /**
@@ -137,12 +139,10 @@ const putToCart = (prd) => {
  * @param {Array} cart
  */
 const checkCart = (prd, cart) => {
-  for (i = 0; i < cart.length; i++) {
-    if (prd._id == cart[i]._id && prd.color == cart[i].color) {
-      return true;
-    } else {
-      console.log("erreur");
-      return false;
-    }
+ for (let i = 0; i < cart.length; i++) {
+  let prodEnCours = cart[i];
+  if (prd._id === prodEnCours._id && prd.color === prodEnCours.color) {
+    cart[i].quantity = parseInt(cart[i].quantitiy) + parseInt(prd.quantity);
+    return true;
   }
-};
+} }
