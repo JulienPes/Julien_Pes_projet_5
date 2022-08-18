@@ -35,7 +35,7 @@ const getId = async (products) => {
         });
         clientCart.push(allProducts);
         console.log(clientCart);
-        displayProd(allProducts);
+        displayProd(allProducts, product);
       }
     }
   } catch (error) {
@@ -43,16 +43,62 @@ const getId = async (products) => {
   }
 };
 // 3 eme fonction : afficher le produit attacher evenement click sur class delete item attacher un autre evenement change
-const displayProd = (allProd) => {
+const displayProd = (allProd, productAdded) => {
   let section = document.getElementById("cart__items");
   let article = document.createElement("article");
   article.classList.add("cart__item");
-  article.textContent = `${allProd._id}`;
-  article.textContent = `${allProd.color}`;
+  article.setAttribute("data-id", allProd._id);
+  article.setAttribute("data-color", allProd.color);
   section.appendChild(article);
+  const elem = document.createElement("div");
+  elem.classList.add("cart__item__img");
+  section.appendChild(elem);
+  let img = document.createElement("img");
+  img.setAttribute("src", allProd.imageUrl);
+  img.setAttribute("alt", allProd.altTxt);
+  elem.appendChild(img);
+  const elem1 = document.createElement("div");
+  elem1.classList.add("cart__item__content");
+  section.appendChild(elem1);
+  const elem2 = document.createElement("div");
+  elem2.classList.add("cart__item__content__description");
+  section.appendChild(elem2);
+  let title = document.createElement("h2");
+  title.textContent = allProd.name;
+  section.appendChild(title);
+  let color = document.createElement("p");
+  color.textContent = allProd.color;
+  section.appendChild(color);
+  let price = document.createElement("p");
+  price.textContent = allProd.price + "€";
+  section.appendChild(price);
+  const elem3 = document.createElement("div");
+  elem3.classList.add("cart__item__content__settings");
+  section.appendChild(elem3);
+  const elem4 = document.createElement("div");
+  elem4.classList.add("cart__item__content__settings__quantity");
+  elem3.appendChild(elem4);
+  let quantity = document.createElement("p");
+  quantity.textContent = "Qté : ";
+  elem4.appendChild(quantity);
+  let input = document.createElement("input");
+  input.setAttribute("type", "number");
+  input.classList.add("itemQuantity");
+  input.setAttribute("name", "itemQuantity");
+  input.setAttribute("min", "1");
+  input.setAttribute("max", "100");
+  input.setAttribute("value", allProd.quantity);
+  elem4.appendChild(input);
+  console.log(productAdded.quantity);
+  changeQuantity(input.value, productAdded);
 };
 // 4 eme fonction : deleteItem (remove)(closest) supprimer ensuite l'article du localStorage apl fonction 6
 // 5 eme fonction : changeQuantity change quantité du localStorage et ensuite apl la 6
+const changeQuantity = (inputValue, productAdded) => {
+  if (inputValue === productAdded.quantity) {
+  } else {
+  }
+};
 // 6 eme fonction : en 1er apl localStorage et ensuite calcul faire le total totalQty et totalPrice
 
 // voir methode formData et les regex
