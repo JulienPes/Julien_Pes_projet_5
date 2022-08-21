@@ -6,7 +6,7 @@ window.onload = () => {
   getProducts();
 };
 /**
- * Récupérer les données des produits 
+ * Récupérer les données des produits
  * @returns Object
  */
 const getProducts = async () => {
@@ -30,7 +30,7 @@ const getProducts = async () => {
 };
 /**
  * Afficher les produits
- * @param {Object} prod 
+ * @param {Object} prod
  */
 const create = (prod) => {
   let link = document.createElement("a");
