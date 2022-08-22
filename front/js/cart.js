@@ -16,7 +16,6 @@ const getStorage = () => {
 // 2 eme fonction : boucle sur local storage et pour chaque tour récuperer l'id avec id faire fetch
 const getId = async (products) => {
   clientCart = [];
-  clientCart = JSON.parse(localStorage.getItem("cmd"));
   console.log(clientCart);
   try {
     for (let product of products) {
@@ -100,12 +99,22 @@ const displayProd = (allProd, productAdded, clientCart) => {
   remove.textContent = "Supprimer";
   remove.classList.add("deleteItem");
   remove.addEventListener("click", () => {
-    deleteItem();
+    deleteItem(clientCart, productAdded);
   });
   elem5.appendChild(remove);
 };
 // 4 eme fonction : deleteItem (remove)(closest) supprimer ensuite l'article du localStorage apl fonction 6
-const deleteItem = () => {};
+const deleteItem = (clientCart, productAdded) => {
+  for (let i = 0; i < clientCart.length; i++) {
+    if (clientCart.length === 1) {
+      window.localStorage.removeItem("cmd");
+    } else {
+      //  const el = document.getElementById("cart__items");
+      //   const el2 = el.closest("section")
+      //   console.log(el2);
+    }
+  }
+};
 
 // 5 eme fonction : changeQuantity change quantité du localStorage et ensuite apl la 6
 const changeQuantity = (inputValue, productAdded, clientCart) => {
