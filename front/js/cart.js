@@ -8,42 +8,35 @@ const getStorage = () => {
   if (!localStorage.getItem("cmd")) {
     alert("votre panier est vide !");
   } else {
-    const storage = localStorage.getItem("cmd");
-    const response = JSON.parse(storage);
-    getId(response);
+    const storage = JSON.parse(localStorage.getItem("cmd"));
+    getId(storage);
   }
 };
 // 2 eme fonction : boucle sur local storage et pour chaque tour récuperer l'id avec id faire fetch
 const getId = async (products) => {
   clientCart = [];
-  console.log(clientCart);
   try {
     for (let product of products) {
       const productId = product._id;
       const prodUrl = `http://localhost:3000/api/products/${productId}`;
-      if (!prodUrl) {
+      const response = await fetch(prodUrl);
+      if (!response.ok) {
         throw new Error(`"erreur http :" ${response.status}`);
       } else {
-        const response = await fetch(prodUrl);
-        const allProducts = await response.json();
-        Object.defineProperty(allProducts, "color", {
-          value: product.color,
-          writable: true,
-        });
-        Object.defineProperty(allProducts, "quantity", {
-          value: product.quantity,
-          writable: true,
-        });
-        clientCart.push(allProducts);
-        displayProd(allProducts, product, clientCart);
+        const oneProduct = await response.json();
+        oneProduct.color = product.color;
+        oneProduct.quantity = product.quantity;
+        clientCart.push(oneProduct);
+        displayProd(oneProduct, product, clientCart);
       }
     }
   } catch (error) {
     alert(error);
   }
 };
+
 // 3 eme fonction : afficher le produit attacher evenement click sur class delete item attacher un autre evenement change
-const displayProd = (allProd, productAdded, clientCart) => {
+const displayProd = (allProd, prod, clientCart) => {
   let section = document.getElementById("cart__items");
   let article = document.createElement("article");
   article.classList.add("cart__item");
@@ -87,9 +80,9 @@ const displayProd = (allProd, productAdded, clientCart) => {
   input.setAttribute("name", "itemQuantity");
   input.setAttribute("min", "1");
   input.setAttribute("max", "100");
-  input.setAttribute("value", productAdded.quantity);
+  input.setAttribute("value", prod.quantity);
   input.addEventListener("input", () => {
-    changeQuantity(input.value, productAdded, clientCart);
+    changeQuantity(input.value, prod, clientCart);
   });
   elem4.appendChild(input);
   const elem5 = document.createElement("div");
@@ -98,38 +91,46 @@ const displayProd = (allProd, productAdded, clientCart) => {
   let remove = document.createElement("p");
   remove.textContent = "Supprimer";
   remove.classList.add("deleteItem");
-  remove.addEventListener("click", () => {
-    deleteItem(clientCart, productAdded);
+  remove.addEventListener("click", (event) => {
+    console.log(event);
+    deleteItem(event, clientCart, prod);
   });
   elem5.appendChild(remove);
+  totalProduct(clientCart);
 };
 // 4 eme fonction : deleteItem (remove)(closest) supprimer ensuite l'article du localStorage apl fonction 6
-const deleteItem = (clientCart, productAdded) => {
-  for (let i = 0; i < clientCart.length; i++) {
-    if (clientCart.length === 1) {
-      window.localStorage.removeItem("cmd");
-    } else {
-      //  const el = document.getElementById("cart__items");
-      //   const el2 = el.closest("section")
-      //   console.log(el2);
+const deleteItem = (event, clientCart, prod) => {
+  for (let element of clientCart) {
+    if (element.color === prod.color && element._id === prod._id) {
+      localStorage.removeItem();
+      event.target.closest("article").remove();
     }
   }
 };
 
 // 5 eme fonction : changeQuantity change quantité du localStorage et ensuite apl la 6
-const changeQuantity = (inputValue, productAdded, clientCart) => {
+const changeQuantity = (inputValue, prod, clientCart) => {
   for (let i = 0; i < clientCart.length; i++) {
     let prodCart = clientCart[i];
-    if (prodCart.quantity != inputValue && productAdded._id === prodCart._id) {
+    if (prodCart.color === prod.color && prod._id === prodCart._id) {
       prodCart.quantity = inputValue;
-      totalProduct(prodCart);
-    } else {
-      totalProduct(prodCart);
+      totalProduct(clientCart);
     }
   }
 };
 
 // 6 eme fonction : en 1er apl localStorage et ensuite calcul faire le total totalQty et totalPrice
-const totalProduct = (inputValue) => {};
+const totalProduct = (prodCart) => {
+  console.log(prodCart);
+  let totalQty = 0;
+  let totalPrice = 0;
+  prodCart.forEach((element, index) => {
+    totalQty += parseInt(element.quantity);
+    totalPrice += parseInt(element.price) * parseInt(element.quantity);
+  });
+
+  document.getElementById("totalQuantity").textContent = totalQty;
+  document.getElementById("totalPrice").textContent = totalPrice;
+};
 
 // voir methode formData et les regex
