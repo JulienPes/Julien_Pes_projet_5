@@ -49,10 +49,6 @@ const displayProd = (product) => {
     let opt = new Option(color, color);
     document.getElementById("colors").appendChild(opt);
   });
-
-  // for (let color of product.colors) {
-  //   let opt = new Option(color, color);
-  //   document.getElementById("colors").appendChild(opt);
   attach(product._id);
 };
 /**
@@ -80,9 +76,6 @@ const add = (product) => {
       color: clrValue,
       quantity: qtyValue,
     };
-    //   let objLinea = JSON.stringify(prd);
-    //   localStorage.setItem("obj", objLinea);
-    //   console.log(objLinea);
     putToCart(prd);
   }
 };
