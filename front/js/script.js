@@ -26,7 +26,7 @@ const getProducts = async () => {
       const products = await response.json();
       // Faire boucle sur le tableau de produits
       for (let product of products) {
-        // appel create avec le tableau en paramètre afin d'afficher les produits
+        // appel fonction affichage produits avec le tableau en paramètre afin d'afficher les produits
         create(product);
       }
     }
@@ -60,10 +60,10 @@ const create = (prod) => {
   let para = document.createElement("p");
   para.setAttribute("class", "productDescription");
   para.textContent = prod.description;
-  // Ajouter les liens à élément id
-  document.getElementById("items").append(link);
-  // Affichage des articles
-  link.append(article);
   // Affichage images, titres et textes
   article.append(img, h3, para);
+  // Affichage des articles
+  link.append(article);
+  // Ajouter les liens à élément id
+  document.getElementById("items").append(link);
 };

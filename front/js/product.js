@@ -4,7 +4,7 @@
 // Attendre que le dom soit chargé
 window.onload = () => {
   console.log("Dom is loaded");
-//appel de la fonction de récupération id produit
+  //appel de la fonction de récupération id produit
   getId();
 };
 
@@ -12,9 +12,10 @@ window.onload = () => {
  * Récupérer l'identifiant du produit
  */
 const getId = () => {
-// new URLSearchParams, récupération des paramètres get ( après le "?")
+  // new URLSearchParams, récupération des paramètres get ( après le "?")
   const urlId = new URLSearchParams(window.location.search).get("id");
   console.log(urlId);
+  // Appel fonction de récuperation des produits avec "id" en param
   getProd(urlId);
 };
 /**
@@ -23,22 +24,22 @@ const getId = () => {
  */
 const getProd = async (id) => {
   try {
-// url de l'API avec id produit
+    // url de l'API avec id produit
     const prodApi = `http://localhost:3000/api/products/${id}`;
-// Essayé de récupérer le produit
+    // Essayé de récupérer le produit
     const response = await fetch(prodApi);
-// Si la réponse est a false
+    // Si la réponse est a false
     if (!response.ok) {
-// Lancement d'une nouvelle error en cas de problème
+      // Lancement d'une nouvelle error en cas de problème
       throw new Error(`"erreur http :" ${response.status}`);
     }
-// Sinon récupérer la réponse au format json
+    // Sinon récupérer la réponse au format json
     const product = await response.json();
-// Appel fonction d'affichage produit avec l'objet en paramètre
+    // Appel fonction d'affichage produit avec l'objet en paramètre
     displayProd(product);
-// Attraper l'erreur
+    // Attraper l'erreur
   } catch (error) {
-// Affichage d'une alert avec le parametre de l'erreur
+    // Affichage d'une alert avec le parametre de l'erreur
     alert(error);
   }
 };
@@ -47,26 +48,26 @@ const getProd = async (id) => {
  * @param {*Object} product
  */
 const displayProd = (product) => {
-// Création d'image
+  // Création d'image
   let img = document.createElement("img");
   img.setAttribute("src", product.imageUrl);
   img.setAttribute("alt", product.altTxt);
-// Affichage de l'image du tableau [0]
+  // Affichage de l'image du tableau [0]
   document.getElementsByClassName("item__img")[0].appendChild(img);
-// Affichage titre
+  // Affichage titre
   document.getElementById("title").textContent = product.name;
-// Affichage prix
+  // Affichage prix
   document.getElementById("price").textContent = product.price;
-// Affichage description
+  // Affichage description
   document.getElementById("description").textContent = product.description;
-// Boucle sur mon tableau de couleurs
+  // Boucle sur mon tableau de couleurs
   product.colors.forEach((color) => {
-// Création de nouvelle option
+    // Création de nouvelles options
     let opt = new Option(color, color);
-// Affichage d'une option a chaque tour de boucle
+    // Affichage de l'option a chaque tour de boucle
     document.getElementById("colors").appendChild(opt);
   });
-// Appel fonction attacheur d'évènement avec id du prod en paramètre
+  // Appel fonction attacheur d'évènement avec id du prod en paramètre
   attach(product._id);
 };
 /**
@@ -75,9 +76,9 @@ const displayProd = (product) => {
  */
 // Fonction attacheur d'évènement
 const attach = (idProd) => {
-// Ajout d'évenement "click" au bouton d'ajout au panier
+  // Ajout d'évenement "click" au bouton d'ajout au panier
   document.getElementById("addToCart").addEventListener("click", () => {
-// Au "click" appel de la fonction d'ajout au panier avec id du prod en paramètre
+    // Au "click" appel de la fonction d'ajout au panier avec id du prod en paramètre
     add(idProd);
   });
 };
@@ -87,26 +88,28 @@ const attach = (idProd) => {
  */
 //
 const add = (idProduct) => {
-// Récupération de l'id "colors"
+  // Récupération de l'id "colors"
   let colorOpt = document.getElementById("colors");
-// Récupération de la valeur séléctionné dans l'index du tableau de couleur
+  // Récupération de la valeur séléctionné dans l'index du tableau de couleur
   const clrValue = colorOpt.options[colorOpt.selectedIndex].value;
-// Récupération de la valeur de la quantité
+  // Récupération de la valeur de la quantité
   let qtyValue = document.getElementById("quantity").value;
-// Si couleur sélectionné et nombre supèrieur à 0 et infèrieur à 100
+  // Si couleur sélectionné et nombre supèrieur à 0 et infèrieur à 100
   if (optSelected(clrValue) && nbSelected(qtyValue)) {
-// Alors désactivation du bouton d'ajout au panier
+    // Alors désactivation du bouton d'ajout au panier
     document.getElementById("addToCart").disabled = true;
-// Création de l'objet du produit séléctionné
-    let prd = {
+    // Création de l'objet du produit séléctionné
+    prd = {
       _id: idProduct,
       color: clrValue,
-      quantity: qtyValue,
+      quantity: parseInt(qtyValue),
     };
-// Appel de la fonction de stockage dans le localStorage
+    console.log(prd);
+    // Appel de la fonction de stockage dans le localStorage
     putToCart(prd);
   }
 };
+
 /**
  *Vérifier que une couleur a bien était choisie
  * @param {String} value
@@ -114,11 +117,11 @@ const add = (idProduct) => {
  */
 // Fonction déterminant si couleur séléctionnée avec la couleur en paramètre
 const optSelected = (clrValue) => {
-// Si pas d'option sélectionnée
+  // Si pas d'option sélectionnée
   if (!clrValue) {
-// Affichage d'une alerte
+    // Affichage d'une alerte
     alert("Veuillez choisir une couleur");
-// Réponse attendue
+    // Réponse attendue
     return false;
   }
   // Sinon réponse attendue
@@ -131,14 +134,15 @@ const optSelected = (clrValue) => {
  */
 // Fonction déterminant si quantité séléctionnée avec le nombre en paramètre
 const nbSelected = (qtyValue) => {
-// Si la quantité n'esxiste pas ou n'est pas bonne
+  // Si la quantité n'esxiste pas ou n'est pas bonne
   if (qtyValue === "undefined" || 0 >= qtyValue || 100 < qtyValue) {
-// Alors alerte 
+    // Alors alerte
     alert("Veuillez selectionner une quantité valide");
-// Réponse "false" attendue
+    // Réponse "false" attendue
     return false;
   }
-// Sino reponse "true"
+
+  // Sinon reponse "true"
   return true;
 };
 /**
@@ -146,29 +150,32 @@ const nbSelected = (qtyValue) => {
  */
 const putToCart = (prd) => {
   console.log(prd);
-// Création d'une variable vide
+  // Création d'une variable vide
   let cart;
-// Si il n'y a pas déjà de produit dans le localStorage
+  // Si il n'y a pas déjà de produit dans le localStorage
   if (!localStorage.getItem("cmd")) {
-// Alors création d'un tableau vide
+    // Alors création d'un tableau vide
     cart = [];
-// Insertion d'un nouveau produit dans le tableau
+
+    // Insertion d'un nouveau produit dans le tableau
     cart.push(prd);
   } else {
-// Sinon déballage du localStorage et récuperation des produits
+    // Sinon déballage du localStorage et récuperation des produits
     cart = JSON.parse(localStorage.getItem("cmd"));
-    console.log(cart);
-// Appel de la fonction  de controlle d'un produit existant avec le produit et le tableau en param
+
+    // Appel de la fonction  de controlle d'un produit existant avec le produit et le tableau en param
     if (!checkCart(prd, cart)) {
-// Si le produit n'existe pas alors insertion du nouveau produit dans le tableau
+      // Si le produit n'existe pas alors insertion du nouveau produit dans le tableau
       cart.push(prd);
     }
-}
-// Je remets cart stringifié dans le localStorage
+  
+    console.log(cart);
+  }
+  // Je remets cart stringifié dans le localStorage
   localStorage.setItem("cmd", JSON.stringify(cart));
-// Réactivation du bouton d'ajout au panier
+  // Réactivation du bouton d'ajout au panier
   document.getElementById("addToCart").disabled = false;
-// Création d'une alerte d'ajout au panier
+  // Création d'une alerte d'ajout au panier
   alert("Produit ajouté");
 };
 /**
@@ -178,16 +185,16 @@ const putToCart = (prd) => {
  */
 // Fonction  de controlle d'un produit existant avec le produit et le tableau en param
 const checkCart = (prd, cart) => {
-// Boucle sur le tableau de produits
-  for (let i = 0; i < cart.length; i++) {
-// Variable contenant l'index de mon tableau
-    let prodEnCours = cart[i];
-// Si le produit entrain d'être ajouté au panier contient un id et une couleur déjà présente dans mon panier
-    if (prd._id === prodEnCours._id && prd.color === prodEnCours.color) {
-// Alors ajout d'une quantité au produit existant
-      cart[i].quantity = parseInt(cart[i].quantitiy) + parseInt(prd.quantity);
-// Retour "true" attendu
+  // Boucle sur le tableau de produits
+  for (let i in cart) {
+    // Si le produit entrain d'être ajouté au panier contient un id et une couleur déjà présente dans mon panier
+    if (prd._id === cart[i]._id && prd.color === cart[i].color) {
+      // Alors ajout d'une quantité au produit existant
+      cart[i].quantity += prd.quantity;
+      // Retour "true" attendu
       return true;
     }
   }
+  return false;
 };
+
