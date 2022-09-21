@@ -168,7 +168,7 @@ const putToCart = (prd) => {
       // Si le produit n'existe pas alors insertion du nouveau produit dans le tableau
       cart.push(prd);
     }
-  
+
     console.log(cart);
   }
   // Je remets cart stringifié dans le localStorage
@@ -197,4 +197,3 @@ const checkCart = (prd, cart) => {
   }
   return false;
 };
-

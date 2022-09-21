@@ -17,7 +17,7 @@ const getStorage = () => {
     // Création d'une alerte
     alert("votre panier est vide !");
   } else {
-    // Sinon déballage du localStorage et récuperation des produits
+    // Sinon déballage du localStorage
     const storage = JSON.parse(localStorage.getItem("cmd"));
     // Appel de la fonction de récupération d'id avec mes produits en paramètre
     getId(storage);
@@ -37,7 +37,7 @@ const getId = async (products) => {
     for (let product of products) {
       // Url avec l'id de mon produit dans le localStorage
       const prodUrl = `http://localhost:3000/api/products/${product._id}`;
-      // Tentative de récuperation du produit
+      // requête au serveur avec "fetch" et récuperation du produit
       const response = await fetch(prodUrl);
       // Si la réponse est négative
       if (!response.ok) {
@@ -199,8 +199,8 @@ const displayProd = (allProd, prod, clientCart) => {
   remove.textContent = "Supprimer";
   // Ajout d'une classe au "p"
   remove.classList.add("deleteItem");
-  // Ajout d'un écouteur d'évenement "click" avec en paramètre l'evènement
-  remove.addEventListener("click", (event) => {
+  // Ajout d'un écouteur d'évenement avec 2 paramètres : 1- le type "click" 2- la fonction
+  remove.addEventListener("click", function (event) {
     // Appel de la fonction de suppression du produit dans le localStorage avec en param l'évènement le tableau de produits et le produit
     deleteItem(event, clientCart, prod);
   });
@@ -210,7 +210,7 @@ const displayProd = (allProd, prod, clientCart) => {
   totalProduct(clientCart);
 };
 /**
- *Supprimer l'article du localStorage
+ *Supprimer l'article du localStorage et de la page
  * @param {*ddEventListener} event
  * @param {*Array} clientCart
  * @param {*Object} prod
@@ -248,19 +248,37 @@ const changeQuantity = (inputValue, prod, clientCart) => {
   const cart = JSON.parse(localStorage.getItem("cmd"));
   // Boucle sur le tableau avec "element" et l'index en paramètre l'element et l'index
   clientCart.forEach((elem, index) => {
-    // Si le produit entrain d'être ajouté au panier contient un id et une couleur déjà présente dans mon panier
-    if (prod._id === elem._id && prod.color === elem.color) {
+    // Réponse "false" attendue
+    // Si le produit entrain d'être ajouté au panier contient un id et une couleur déjà présente dans mon panier et que la qté est juste
+    if (
+      prod._id === elem._id &&
+      prod.color === elem.color &&
+      inputValue != "undefined" &&
+      0 != inputValue &&
+      100 >= inputValue
+    ) {
       // Alors la quantité du panier devient celle de la valeur de l'input
       elem.quantity = inputValue;
       console.log(elem.quantity);
       // Et la quantité du produit dans mon localStorage devient celle de la valeur de l'input
       cart[index].quantity = inputValue;
+      // Activation du boutton "order"
+      document.getElementById("order").disabled = false;
+      // Si la quantité n'est pas juste 
+    } else {
+
+      //La quantité du panier = 0
+      elem.quantity = 0;
+      // Alors alerte
+      alert("Veuillez selectionner une quantité valide");
+      // Désactivation du boutton "order"
+      document.getElementById("order").disabled = true;
     }
+    // Je remets ensuite les produits stringifié dans le localStorage
+    localStorage.setItem("cmd", JSON.stringify(cart));
+    // J'appel la fonction de calcul des totaux avec en paramètre le tableau de tous les produits
+    totalProduct(clientCart);
   });
-  // Je remets ensuite les produits stringifié dans le localStorage
-  localStorage.setItem("cmd", JSON.stringify(cart));
-  // J'appel la fonction de calcul des totaux avec en paramètre le tableau de tous les produits
-  totalProduct(clientCart);
 };
 /**
  * Calculer le total quantité et total prix
@@ -294,23 +312,22 @@ const totalProduct = (clientCart) => {
 const order = (clientCart, e) => {
   // Empecher le comportement par défaut
   e.preventDefault();
-  // Création d'un objet vide
-  let contact = getData();
+  // Affectation du résultat de getData()à la const contact
+  const contact = getData();
+  // Test de la valeur de chacuns des index de l'objet contact
   for (let i in contact) {
-    // Test de la valeur de chacuns des index de l'objet contact
-    if (contact[i] === "") {
+    if (!contact) {
       alert("Veuillez remplir le formulaire");
       return false;
     }
   }
 
   // Récuperation du formulaire dans la constante
-
   console.log(contact);
   // Appel de la fonction de récuperation des identifiants
   const products = checkCart(clientCart);
   console.log(products);
-  // Si il n'y a des identifiants
+  // Si il y a des identifiants
   if (products.length != 0) {
     // Alors création dun objet contenant le formulaire et l'id des produits
     let data = {
@@ -327,7 +344,7 @@ const order = (clientCart, e) => {
  * Envoi des données au back
  * @param {Object} data
  */
-// Foction en charge d'envoyer les données avec l'objet contenant la commande en paramètre
+// Fonction en charge d'envoyer les données avec l'objet contenant la commande en paramètre
 const sendData = async (data) => {
   try {
     // url de l'API avec order
@@ -359,27 +376,47 @@ const sendData = async (data) => {
     alert(error);
   }
 };
+/**
+ * Récuperation des champs du form
+ * @returns object
+ */
 const getData = () => {
   let contact = {};
   const selectForm = document.forms[0];
   // Pour chaque champs en faisant checkData si le champs n'est pas rempli retour false attendu
   const firstName = selectForm.elements.firstName.value;
+  if (checkData("firstName", firstName)) {
+    return false;
+  }
   // Sinon "firstName" dans contact sera égale à la valeur dans le formulaire
   contact.firstName = firstName;
+
   // Pour chaque champs en faisant checkData si le champs n'est pas rempli retour false attendu
   const lastName = selectForm.elements.lastName.value;
+  if (checkData("lastName", lastName)) {
+    return false;
+  }
   // Sinon "lastName" dans contact sera égale à la valeur dans le formulaire
   contact.lastName = lastName;
   // Pour chaque champs en faisant checkData si le champs n'est pas rempli retour false attendu
   const address = selectForm.elements.address.value;
+  if (checkData("address", address)) {
+    return false;
+  }
   // Sinon "address" dans contact sera égale à la valeur dans le formulaire
   contact.address = address;
   // Pour chaque champs en faisant checkData si le champs n'est pas rempli retour false attendu
   const city = selectForm.elements.city.value;
+  if (checkData("city", city)) {
+    return false;
+  }
   // Sinon "city" dans contact sera égale à la valeur dans le formulaire
   contact.city = city;
   // Pour chaque champs en faisant checkData si le champs n'est pas rempli retour false attendu
   const email = selectForm.elements.email.value;
+  if (checkData("email", email)) {
+    return false;
+  }
   // Sinon "email" dans contact sera égale à la valeur dans le formulaire
   contact.email = email;
 
@@ -409,7 +446,7 @@ const checkCart = (clientCart) => {
  */
 // Fonction qui va renvoyer false si checkData renvoi true (si le test de la regex à marché donc le champs contient un truc qu'il ne devrait pas)
 const checkContent = (e) => {
-  // Appel de la fonction de verifiacation, si le champ contient un caractère ou un élement non autorisé
+  // Appel de la fonction de verification, si le champ contient un caractère ou un élement non autorisé
   if (checkData(e.target.id, e.target.value)) {
     // Alors retour false attendu
     return false;
@@ -417,6 +454,7 @@ const checkContent = (e) => {
     // Nettoyage du champ erreur
     document.getElementById(`${e.target.id}ErrorMsg`).textContent = "";
   }
+  return true;
 };
 
 /**
@@ -427,6 +465,7 @@ const checkContent = (e) => {
 const checkData = (type, val) => {
   // Variable contenant "false"
   let ret = false;
+
   // Test de plusieurs champs à la fois
   switch (type) {
     case "firstName":
@@ -482,6 +521,7 @@ const checkNoNumber = (type, val) => {
   // Sinon retour "false" attendu
   return false;
 };
+
 /**
  *
  * @param {*Input} type

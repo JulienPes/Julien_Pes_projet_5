@@ -17,5 +17,5 @@ const getOrderId = () => {
   console.log(orderId);
   // Afficher le numéro dans le dom
   document.getElementById("orderId").textContent = orderId;
-  localStorage.clear()
+  localStorage.removeItem("cmd")
 };
