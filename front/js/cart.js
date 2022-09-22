@@ -222,7 +222,7 @@ const deleteItem = (event, clientCart, prod) => {
   // Boucle sur le tableau avec "element" et l'index en paramètre
   clientCart.forEach((elem, index) => {
     // Si le produit entrain d'être ajouté au panier contient un id et une couleur déjà présente dans mon tableau
-    if (prod._id === elem._id && prod.color == elem.color) {
+    if (prod._id === elem._id && prod.color === elem.color) {
       // Alors je supprime l'élement du tableau
       clientCart.splice(index, 1);
       // Et je le supprime aussi de mon localStorage
@@ -248,38 +248,49 @@ const changeQuantity = (inputValue, prod, clientCart) => {
   const cart = JSON.parse(localStorage.getItem("cmd"));
   // Boucle sur le tableau avec "element" et l'index en paramètre l'element et l'index
   clientCart.forEach((elem, index) => {
-    // Réponse "false" attendue
     // Si le produit entrain d'être ajouté au panier contient un id et une couleur déjà présente dans mon panier et que la qté est juste
     if (
       prod._id === elem._id &&
       prod.color === elem.color &&
-      inputValue != "undefined" &&
-      0 != inputValue &&
-      100 >= inputValue
+      prod.quantity != inputValue &&
+      inputValue > 0 &&
+      inputValue <= 100
     ) {
-      // Alors la quantité du panier devient celle de la valeur de l'input
+      prod.quantity = inputValue;
       elem.quantity = inputValue;
-      console.log(elem.quantity);
-      // Et la quantité du produit dans mon localStorage devient celle de la valeur de l'input
       cart[index].quantity = inputValue;
-      // Activation du boutton "order"
       document.getElementById("order").disabled = false;
-      // Si la quantité n'est pas juste 
-    } else {
-
-      //La quantité du panier = 0
-      elem.quantity = 0;
-      // Alors alerte
-      alert("Veuillez selectionner une quantité valide");
-      // Désactivation du boutton "order"
-      document.getElementById("order").disabled = true;
     }
-    // Je remets ensuite les produits stringifié dans le localStorage
-    localStorage.setItem("cmd", JSON.stringify(cart));
-    // J'appel la fonction de calcul des totaux avec en paramètre le tableau de tous les produits
-    totalProduct(clientCart);
+    if (
+      prod._id === elem._id &&
+      prod.color === elem.color &&
+      prod.quantity != inputValue &&
+      inputValue <= 0
+    ) {
+      cart[index].quantity = inputValue;
+      elem.quantity = 0;
+      prod.quantity = 0;
+      alert("La quantité minimum est 1");
+    }
+    if (
+      prod._id === elem._id &&
+      prod.color === elem.color &&
+      prod.quantity != inputValue &&
+      inputValue > 100
+    ) {
+      elem.quantity = 0;
+      prod.quantity = 0;
+      cart[index].quantity = 0;
+      alert("La quantité maximum est 100");
+    }
   });
+
+  // Je remets ensuite les produits stringifié dans le localStorage
+  localStorage.setItem("cmd", JSON.stringify(cart));
+  // J'appel la fonction de calcul des totaux avec en paramètre le tableau de tous les produits
+  totalProduct(clientCart);
 };
+
 /**
  * Calculer le total quantité et total prix
  * @param {Array} clientCart
@@ -300,6 +311,19 @@ const totalProduct = (clientCart) => {
   document.getElementById("totalQuantity").textContent = totalQty;
   // Ajout de la quantité totale à "totalPrice"
   document.getElementById("totalPrice").textContent = totalPrice;
+  checkProd(clientCart);
+};
+
+const checkProd = (clientCart) => {
+  for (let i in clientCart) {
+    if (
+      clientCart[i].quantity === "undefined" ||
+      clientCart[i].quantity === 0 ||
+      clientCart[i].quantity > 100
+    ) {
+      document.getElementById("order").disabled = true;
+    }
+  }
 };
 
 /************************* PARTIE FORMULAIRE***********************/
