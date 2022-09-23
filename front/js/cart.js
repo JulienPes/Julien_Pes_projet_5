@@ -227,6 +227,9 @@ const deleteItem = (event, clientCart, prod) => {
       clientCart.splice(index, 1);
       // Et je le supprime aussi de mon localStorage
       cart.splice(index, 1);
+      if(clientCart.length === 0){
+        alert("Votre panier est vide !")
+      }
     }
   });
   // Je remets ensuite les produits stringifié dans le localStorage
